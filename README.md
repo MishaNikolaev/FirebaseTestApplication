@@ -9,4 +9,4 @@
 
 Получаем на выходе:
 
-[logs](https://github.com/MishaNikolaev/FirebaseTestApplication/blob/master/firebase.jpg)
+![logs](https://github.com/MishaNikolaev/FirebaseTestApplication/blob/master/firebase.jpg)
