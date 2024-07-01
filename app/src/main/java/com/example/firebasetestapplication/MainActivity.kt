@@ -72,8 +72,11 @@ fun MainScreen() {
                 Card(modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 10.dp, end = 10.dp,
-                        top = 50.dp)){
+                        top = 40.dp)){
                     Text(text = book.name,
+                        modifier = Modifier.fillMaxWidth()
+                            .wrapContentWidth().padding(15.dp))
+                    Text(text = book.description,
                         modifier = Modifier.fillMaxWidth()
                             .wrapContentWidth().padding(15.dp))
                 }
