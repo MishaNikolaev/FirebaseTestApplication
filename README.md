@@ -2,8 +2,7 @@
 
 Весь обновлённый код смотреть в **MainActivity**
 
-<img src="https://github.com/MishaNikolaev/FirebaseTestApplication/blob/master/photoFB3.jpg" width="500" height="500">
+<img src="https://github.com/MishaNikolaev/FirebaseTestApplication/blob/master/photoFB3.jpg" width="400" height="800">
 
-![logs](https://github.com/MishaNikolaev/FirebaseTestApplication/blob/master/photoFB3.jpg)
 ![logs](https://github.com/MishaNikolaev/FirebaseTestApplication/blob/master/photoFB2.jpg = 250x250)
 ![logs](https://github.com/MishaNikolaev/FirebaseTestApplication/blob/master/photoFB1.jpg = 250x250)
