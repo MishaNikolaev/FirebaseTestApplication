@@ -5,10 +5,14 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageFormat.JPEG
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -48,14 +52,32 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MainScreen()
+            val fs = Firebase.firestore
+            val storage = Firebase.storage.reference.child("images")
+
+            val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) { uri ->
+                if (uri == null) return@rememberLauncherForActivityResult
+                val task = storage.child("testphoto.jpg").putBytes(
+                    bitmapTobiteArray(this, uri)
+                )
+                task.addOnSuccessListener { uploadTask ->
+                    uploadTask.metadata!!.reference!!.downloadUrl.addOnCompleteListener{ uriTask ->
+                        saveBook(fs, uriTask.result.toString())
+                    }
+                }
+            }
+            MainScreen{
+                launcher.launch(PickVisualMediaRequest(
+                    mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+                ))
+            }
         }
     }
 }
 
 @SuppressLint("RememberReturnType")
 @Composable
-fun MainScreen() {
+fun MainScreen(onClick: () -> Unit) {
 
     val fs = Firebase.firestore
     val list = remember{
@@ -111,15 +133,7 @@ fun MainScreen() {
             .fillMaxWidth()
             .padding(10.dp),
             onClick = {
-
-                val task = storage.child("su34plane.jpg").putBytes(
-                    bitmapTobiteArray(context)
-                )
-                task.addOnSuccessListener { uploadTask ->
-                    uploadTask.metadata!!.reference!!.downloadUrl.addOnCompleteListener{ uriTask ->
-                        saveBook(fs, uriTask.result.toString())
-                    }
-                }
+                onClick()
         })
         {
             Text(text = "Add book")
@@ -127,8 +141,9 @@ fun MainScreen() {
     }
 }
 
-private fun bitmapTobiteArray(context: Context) : ByteArray{
-    val bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.su34)
+private fun bitmapTobiteArray(context: Context, uri: Uri) : ByteArray{
+    val inputStream = context.contentResolver.openInputStream(uri)
+    val bitmap = BitmapFactory.decodeStream(inputStream)
     val baos = ByteArrayOutputStream()
     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
     return baos.toByteArray()
