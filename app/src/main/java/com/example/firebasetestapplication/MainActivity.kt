@@ -39,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.firebasetestapplication.data.Book
+import com.example.firebasetestapplication.ui.login.LoginScreen
 import com.example.firebasetestapplication.ui.theme.FirebaseTestApplicationTheme
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
@@ -52,109 +53,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val fs = Firebase.firestore
-            val storage = Firebase.storage.reference.child("images")
-
-            val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) { uri ->
-                if (uri == null) return@rememberLauncherForActivityResult
-                val task = storage.child("testphoto.jpg").putBytes(
-                    bitmapTobiteArray(this, uri)
-                )
-                task.addOnSuccessListener { uploadTask ->
-                    uploadTask.metadata!!.reference!!.downloadUrl.addOnCompleteListener{ uriTask ->
-                        saveBook(fs, uriTask.result.toString())
-                    }
-                }
-            }
-            MainScreen{
-                launcher.launch(PickVisualMediaRequest(
-                    mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
-                ))
-            }
+            LoginScreen()
         }
+
     }
-}
-
-@SuppressLint("RememberReturnType")
-@Composable
-fun MainScreen(onClick: () -> Unit) {
-
-    val fs = Firebase.firestore
-    val list = remember{
-        mutableStateOf(emptyList<Book>())
-    }
-    val context = LocalContext.current
-
-    val storage = Firebase.storage.reference.child("images")
-
-    val listener = fs.collection("books").addSnapshotListener{ snapshot, exeption ->
-        list.value = snapshot?.toObjects(Book::class.java)!!
-    }
-
-    //listener.remove()
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(bottom = 50.dp),
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.8f)
-        ) {
-            items(list.value){ book ->
-                Card(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        start = 10.dp, end = 10.dp,
-                        top = 40.dp
-                    )){
-                    Row(modifier = Modifier.fillMaxWidth()){
-                        AsyncImage(model = book.imageUrl, contentDescription = "",
-                     )
-                    }
-                    Text(text = book.name,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentWidth()
-                            .padding(15.dp))
-                    Text(text = book.description,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentWidth()
-                            .padding(15.dp))
-                }
-            }
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-        Button(modifier = Modifier
-            .fillMaxWidth()
-            .padding(10.dp),
-            onClick = {
-                onClick()
-        })
-        {
-            Text(text = "Add book")
-        }
-    }
-}
-
-private fun bitmapTobiteArray(context: Context, uri: Uri) : ByteArray{
-    val inputStream = context.contentResolver.openInputStream(uri)
-    val bitmap = BitmapFactory.decodeStream(inputStream)
-    val baos = ByteArrayOutputStream()
-    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-    return baos.toByteArray()
-}
-
-private fun saveBook(fs: FirebaseFirestore, url: String){
-    fs.collection("books").document().set(Book(
-        "Cloud of war",
-        "The book by Alexander Pokryshkin presents his biography during the war years.",
-        "1000",
-        "Memoirs",
-        url
-    ))
 }
