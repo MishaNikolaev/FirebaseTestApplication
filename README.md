@@ -6,5 +6,5 @@
 
 <img src="https://github.com/MishaNikolaev/FirebaseTestApplication/blob/master/photoFB2.jpg" width="400" height="800">
 
-<img src="https://github.com/MishaNikolaev/FirebaseTestApplication/blob/master/photoFB1.jpg" width="2500" height="800">
+<img src="https://github.com/MishaNikolaev/FirebaseTestApplication/blob/master/photoFB1.jpg" width="2500" height="1000">
 
