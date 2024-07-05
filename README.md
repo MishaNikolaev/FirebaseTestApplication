@@ -1,3 +1,5 @@
+![Firebase](https://img.shields.io/badge/firebase-a08021?style=for-the-badge&logo=firebase&logoColor=ffcd34)
+
 **Это пробный пример использования Firebase для доступа к хранилищу**
 
 После добавления библиотек прописываем в MainActivity:
